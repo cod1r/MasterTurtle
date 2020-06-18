@@ -4,6 +4,7 @@ import random
 import find_path_turtle
 
 
+# creates the gui and the lines
 
 root = tkinter.Tk()
 root.resizable(False, False)
@@ -20,6 +21,7 @@ for y in range(50):
     canvas.create_line(0, y*gap, size_x, y*gap)
 
 
+# randomly generates a grid like maze
 
 grid = []
 for x in range(size_x//gap):
@@ -33,33 +35,62 @@ for x in range(size_x//gap):
     grid.append(row)
 
 
+# loops through grid to see where to create a black square
+
 for y in range(len(grid)):
     # print(grid[y])
     for x in range(len(grid[y])):
         if grid[y][x] == 3:
             canvas.create_rectangle((x*gap, y*gap, (x*gap)+gap, (y*gap)+gap), fill='black')
 
-grid[0][0] = 1
-grid[len(grid)-1][len(grid[0])-1] = 2
-canvas.create_rectangle((0, 0, gap, gap), fill='green')
-canvas.create_rectangle((size_x-gap, size_y-gap, size_x, size_y), fill='red')
-canvas.grid(column=0, row=0)
-canvas.bind()
+
+# randomly gets the indexes from a list so that copies of the same coordinates are not possible
+
+indexes = [x for x in range(size_x//gap)]
+rs = indexes[random.randrange(0, len(indexes))]
+indexes.remove(rs)
+cs = indexes[random.randrange(0, len(indexes))]
+indexes.remove(cs)
+rt = indexes[random.randrange(0, len(indexes))]
+indexes.remove(rt)
+ct = indexes[random.randrange(0, len(indexes))]
+indexes.remove(ct)
+
+# randomly generates where the turtle will start and where it will go to.
+
+grid[cs][rs] = 1
+grid[ct][rt] = 2
+canvas.create_rectangle((rs*gap, cs*gap, (rs*gap)+gap, (cs*gap)+gap), fill='green')
+canvas.create_rectangle((rt*gap, ct*gap, (rt*gap)+gap, (ct*gap)+gap), fill='red')
+
+# sets the turtles position.
+
 tt = turtle.RawTurtle(t)
 tt.penup()
-tt.setpos((gap/2, gap/2))
+tt.setpos((rs*gap+gap//2, cs*gap+gap//2))
 tt.pendown()
+
+# some settings that have to be set that lets the gui be seen correctly. Some are required some are not.
+
+canvas.grid(column=0, row=0)
+canvas.bind()
 canvas.pack()
 tt._delay(20)
 
 
 def get_grid_and_solve():
+    # puts the location of the black squares, start, and stop positions in a dictionary
     d = find_path_turtle.establish_knowns(grid)
+    # list to contain all the possible paths to target location.
     paths = []
+    # function that recursively finds all the possible paths to location.
     find_path_turtle.find_path(d['s'], [], set(), d, grid, paths)
+    # finds the smallest path in the list
     x = min(paths, key=len)
+    # previous coordinate so that it knows how to turn
     prev = x[0]
     for p in x:
+        # conditions that turn the turtle
         if p[1] > prev[1]:
             tt.setheading(0)
         elif p[1] < prev[1]:
@@ -68,13 +99,17 @@ def get_grid_and_solve():
             tt.setheading(90)
         elif p[0] < prev[0]:
             tt.setheading(270)
+
+        # moves the turtle to location.
         tt.goto(p[1]*gap+gap//2, p[0]*gap+gap//2)
         prev = p
+    # calls the gui event loop to show the events
     t.mainloop()
 
 
 
 if __name__ == "__main__":
+    # error handler just in case there isn't a possible solution
     try:
         get_grid_and_solve()
     except:

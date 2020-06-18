@@ -1,6 +1,9 @@
 import random
 
 def grid_make():
+    """
+    A test function to generate a random grid.
+    """
     grid = []
     size_x = 200
     size_y = 200
@@ -21,6 +24,9 @@ def grid_make():
     return grid
 
 def establish_knowns(grid):
+    """
+    Function to return dictionary that has the walls, start, and stop locations.
+    """
     d = {'w':set()}
     for x in range(len(grid)):
         for y in range(len(grid[x])):
@@ -32,16 +38,25 @@ def establish_knowns(grid):
                 d["w"].add((x, y))
     return d
 
-
+# class that contains a variable to help the find_path function know which "node" to prioritize.
 class Node:
     def __init__(self, g, loc):
         self.g = g
         self.loc = loc
 
+
+# returns the euclidean distance between two points
 def calc(pA, pB):
+    """returns the euclidean distance between two points"""
     return (pA[0]-pB[0])**2+(pA[1]-pB[1])**2
 
+
+
 def find_path(loc, path, been_to, d, grid, paths):
+    """
+    Recursively returns the paths to target location borrowing a simple heuristic from popular path finding algorithms which is the euclidean distance. 
+    This function isn't the best or efficient but it works and displays a fun gui.
+    """
     if loc == d['t']:
         path.append(loc)
         paths.append(path)
@@ -70,6 +85,3 @@ def find_path(loc, path, been_to, d, grid, paths):
             find_path(x.loc, path[:], been_to, d, grid, paths)
                 
 
-# find_path(d['s'], [], set())
-
-# print("DONE")
