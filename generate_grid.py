@@ -85,24 +85,31 @@ def get_grid_and_solve():
     paths = []
     # function that recursively finds all the possible paths to location.
     find_path_turtle.find_path(d['s'], [], set(), d, grid, paths)
-    # finds the smallest path in the list
-    x = min(paths, key=len)
-    # previous coordinate so that it knows how to turn
-    prev = x[0]
-    for p in x:
-        # conditions that turn the turtle
-        if p[1] > prev[1]:
-            tt.setheading(0)
-        elif p[1] < prev[1]:
-            tt.setheading(180)
-        elif p[0] > prev[0]:
-            tt.setheading(90)
-        elif p[0] < prev[0]:
-            tt.setheading(270)
+    # sorts the paths list based on length
+    paths.sort(key=len)
+    # loops through all the paths
+    for x in paths:
+        # resets the turtles location.
+        tt.penup()
+        tt.setpos((rs*gap+gap//2, cs*gap+gap//2))
+        tt.pendown()
 
-        # moves the turtle to location.
-        tt.goto(p[1]*gap+gap//2, p[0]*gap+gap//2)
-        prev = p
+        # previous coordinate so that it knows how to turn
+        prev = x[0]
+
+        for p in x:
+            # conditions that turn the turtle
+            if p[1] > prev[1]:
+                tt.setheading(0)
+            elif p[1] < prev[1]:
+                tt.setheading(180)
+            elif p[0] > prev[0]:
+                tt.setheading(90)
+            elif p[0] < prev[0]:
+                tt.setheading(270)
+            # moves the turtle to location.
+            tt.goto(p[1]*gap+gap//2, p[0]*gap+gap//2)
+            prev = p
     # calls the gui event loop to show the events
     t.mainloop()
 

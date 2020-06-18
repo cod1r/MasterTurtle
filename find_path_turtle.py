@@ -80,6 +80,9 @@ def find_path(loc, path, been_to, d, grid, paths):
         if len(options) == 0:
             return False
         options.sort(key=lambda x: x.g)
+        # for x in options:
+        #     print(x.g)
+        # print('--------------')
         # print(len(options))
         for x in options:
             find_path(x.loc, path[:], been_to, d, grid, paths)
