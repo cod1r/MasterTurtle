@@ -8,8 +8,8 @@ import find_path_turtle
 
 root = tkinter.Tk()
 root.resizable(False, False)
-size_x = 400
-size_y = 400
+size_x = 200
+size_y = 200
 gap = 20
 root.geometry(str(size_x+10)+'x'+str(size_y+10))
 canvas = tkinter.Canvas(root, width=size_x, height=size_y)
@@ -82,34 +82,34 @@ def get_grid_and_solve():
     # puts the location of the black squares, start, and stop positions in a dictionary
     d = find_path_turtle.establish_knowns(grid)
     # list to contain all the possible paths to target location.
-    paths = []
+    paths = set()
     # function that recursively finds all the possible paths to location.
     find_path_turtle.find_path(d['s'], [], set(), d, grid, paths)
     # sorts the paths list based on length
-    paths.sort(key=len)
+    # paths.sort(key=len)
     # loops through all the paths
-    for x in paths:
+    # for x in paths:
         # resets the turtles location.
-        tt.penup()
-        tt.setpos((rs*gap+gap//2, cs*gap+gap//2))
-        tt.pendown()
+        # tt.penup()
+        # tt.setpos((rs*gap+gap//2, cs*gap+gap//2))
+        # tt.pendown()
+    x = min(paths, key=len)
+    # previous coordinate so that it knows how to turn
+    prev = x[0]
 
-        # previous coordinate so that it knows how to turn
-        prev = x[0]
-
-        for p in x:
-            # conditions that turn the turtle
-            if p[1] > prev[1]:
-                tt.setheading(0)
-            elif p[1] < prev[1]:
-                tt.setheading(180)
-            elif p[0] > prev[0]:
-                tt.setheading(90)
-            elif p[0] < prev[0]:
-                tt.setheading(270)
-            # moves the turtle to location.
-            tt.goto(p[1]*gap+gap//2, p[0]*gap+gap//2)
-            prev = p
+    for p in x:
+        # conditions that turn the turtle
+        if p[1] > prev[1]:
+            tt.setheading(0)
+        elif p[1] < prev[1]:
+            tt.setheading(180)
+        elif p[0] > prev[0]:
+            tt.setheading(90)
+        elif p[0] < prev[0]:
+            tt.setheading(270)
+        # moves the turtle to location.
+        tt.goto(p[1]*gap+gap//2, p[0]*gap+gap//2)
+        prev = p
     # calls the gui event loop to show the events
     t.mainloop()
 

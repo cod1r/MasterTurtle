@@ -5,8 +5,8 @@ def grid_make():
     A test function to generate a random grid.
     """
     grid = []
-    size_x = 200
-    size_y = 200
+    size_x = 300
+    size_y = 300
     gap = 20
     for x in range(size_x//gap):
         row = []
@@ -17,8 +17,17 @@ def grid_make():
             else:
                 row.append(3)
         grid.append(row)
-    grid[0][0] = 1
-    grid[len(grid)-1][len(grid[0])-1] = 2
+    indexes = [x for x in range(size_x//gap)]
+    rs = indexes[random.randrange(0, len(indexes))]
+    indexes.remove(rs)
+    cs = indexes[random.randrange(0, len(indexes))]
+    indexes.remove(cs)
+    rt = indexes[random.randrange(0, len(indexes))]
+    indexes.remove(rt)
+    ct = indexes[random.randrange(0, len(indexes))]
+    indexes.remove(ct)
+    grid[cs][rs] = 1
+    grid[ct][rt] = 2
     # for x in grid:
     #     print(x)
     return grid
@@ -57,27 +66,32 @@ def find_path(loc, path, been_to, d, grid, paths):
     Recursively returns the paths to target location borrowing a simple heuristic from popular path finding algorithms which is the euclidean distance. 
     This function isn't the best or efficient but it works and displays a fun gui.
     """
-    if loc == d['t']:
+    if len(paths) == 0 and loc == d['t'] and tuple(path) not in paths:
         path.append(loc)
-        paths.append(path)
+        paths.add(tuple(path))
         return True
-    else:
+    elif len(paths) > 0 and len(min(paths, key=len)) > len(path) and loc == d['t'] and tuple(path) not in paths:
+        # print(len(path), len(paths))
+        path.append(loc)
+        paths.add(tuple(path))
+        return True
+    elif len(paths) == 0 or len(path) < len(min(paths, key=len)) and tuple(path) not in paths:
         been_to.add(loc)
         path.append(loc)
         options = []
-        if loc[0] + 1 < len(grid) and (loc[0]+1, loc[1]) not in been_to and (loc[0]+1, loc[1]) not in d['w']:
+        if loc[0] + 1 < len(grid) and 0 <= loc[1] < len(grid[loc[0]]) and (loc[0]+1, loc[1]) not in been_to and (loc[0]+1, loc[1]) not in d['w']:
             n = Node(calc((loc[0]+1, loc[1]), d['t']), (loc[0]+1, loc[1]))
             options.append(n)
-        if loc[0] - 1 >= 0 and (loc[0] - 1, loc[1]) not in been_to and (loc[0]-1, loc[1]) not in d['w']:
+        if loc[0] - 1 >= 0 and 0 <= loc[1] < len(grid[loc[0]]) and (loc[0] - 1, loc[1]) not in been_to and (loc[0]-1, loc[1]) not in d['w']:
             n = Node(calc((loc[0]-1, loc[1]), d['t']), (loc[0]-1, loc[1]))
             options.append(n)
-        if loc[1] + 1 < len(grid[0]) and (loc[0], loc[1] + 1) not in been_to and (loc[0], loc[1] + 1) not in d['w']:
+        if loc[1] + 1 < len(grid[0]) and 0 <= loc[0] < len(grid) and (loc[0], loc[1] + 1) not in been_to and (loc[0], loc[1] + 1) not in d['w']:
             n = Node(calc((loc[0], loc[1]+1), d['t']), (loc[0], loc[1]+1))
             options.append(n)
-        if loc[1] - 1 >= 0 and (loc[0], loc[1] - 1) not in been_to and (loc[0], loc[1] - 1) not in d['w']:
+        if loc[1] - 1 >= 0 and 0 <= loc[0] < len(grid) and (loc[0], loc[1] - 1) not in been_to and (loc[0], loc[1] - 1) not in d['w']:
             n = Node(calc((loc[0], loc[1]-1), d['t']), (loc[0], loc[1]-1))
             options.append(n)
-        if len(options) == 0:
+        if len(options) == 0 or (len(paths) > 0 and len(path) > len(min(paths, key=len))) or tuple(path) in paths:
             return False
         options.sort(key=lambda x: x.g)
         # for x in options:
@@ -85,6 +99,17 @@ def find_path(loc, path, been_to, d, grid, paths):
         # print('--------------')
         # print(len(options))
         for x in options:
-            find_path(x.loc, path[:], been_to, d, grid, paths)
+            been_to_copy = been_to.copy()
+            find_path(x.loc, path[:], been_to_copy, d, grid, paths)
                 
 
+if __name__ == "__main__":
+    grid = grid_make()
+    for x in grid:
+        print(x)
+    d = establish_knowns(grid)
+    print("start: ", d['s'], "end: ", d['t'])
+    paths = set()
+    find_path(d['s'], [], set(), d, grid, paths)
+    for x in paths:
+        print(x)
