@@ -8,8 +8,8 @@ import find_path_turtle
 
 root = tkinter.Tk()
 root.resizable(False, False)
-size_x = 1000
-size_y = 1000
+size_x = 800
+size_y = 800
 gap = 15
 root.geometry(str(size_x+10)+'x'+str(size_y+10))
 canvas = tkinter.Canvas(root, width=size_x, height=size_y)

@@ -5,8 +5,8 @@ def grid_make():
     A test function to generate a random grid.
     """
     grid = []
-    size_x = 1000
-    size_y = 1000
+    size_x = 800
+    size_y = 800
     gap = 15
     for x in range(size_x//gap):
         row = []
