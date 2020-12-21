@@ -13,6 +13,9 @@ size_y = 800
 gap = 15
 root.geometry(str(size_x+10)+'x'+str(size_y+10))
 canvas = tkinter.Canvas(root, width=size_x, height=size_y)
+canvas.bind()
+canvas.grid(column=0, row=0)
+canvas.pack()
 t = turtle.TurtleScreen(canvas)
 t.setworldcoordinates(0, size_y, size_x, 0)
 for x in range(500):
@@ -46,9 +49,7 @@ tt.pendown()
 
 # some settings that have to be set that lets the gui be seen correctly. Some are required some are not.
 
-canvas.grid(column=0, row=0)
-canvas.bind()
-canvas.pack()
+
 
 
 def get_grid_and_solve():
